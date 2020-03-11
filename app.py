@@ -15,12 +15,19 @@
 # eleman sayısı en küçük olan hamleyi tut
 # döngü sonunda bir sonraki hamleyi en iyi hamle ile değiştir.
 
+# [5, 2, 4, 7, 3, 0, 6, 1] local optima örneği
+
+# imports
+from pprint import pprint
+
 
 # Y
 # ↑
 # 0 → → x
 MAX_X_CORD = 8
 MAX_Y_CORD = 8
+
+TRY_COUNT = 20
 
 
 # kontrol fonksiyonları
@@ -70,18 +77,19 @@ def cross_check(arr):
     return total_conflict
 
 # bütün hamlelerin -her sütun diğerleri değişmemiş gibi hesaplanır- çakışma sayılarını bulur
+
+
 def check_min_move(arr):
     """
      arr: [int]
     """
 
-    from pprint import pprint
-    
     # bütün hamlelerin listesi
     # min_list = []
 
     # min maliyete sahip olanlar burada
     min_cost_list = []
+    # TODO min değerinin her bir vezirin yanında vermek veri tekrarına yol açıyor. Daha etkin bir yol bulunabilir.
     # min_cost = False
     for x_cor in range(MAX_X_CORD):
         temp_list = []
@@ -94,18 +102,51 @@ def check_min_move(arr):
             if(len(min_cost_list) > 0 and cost == min_cost_list[0]["cost"]):
                 min_cost_list.append({"x": x_cor, "y": y_cor, "cost": cost})
             if(len(min_cost_list) == 0 or cost < min_cost_list[0]["cost"]):
-                min_cost_list = [ {"x": x_cor, "y": y_cor, "cost": cost}]
-          
-            # print("index", x_cor, " and current index for cost: ",
-            #       y_cor, " , cost: ", cost)
-
+                min_cost_list = [{"x": x_cor, "y": y_cor, "cost": cost}]
         # min_list.append(temp_list)
-    # pprint( min_list)
-    # pprint(min_cost_list)
+    
+    # pprint(min_list)
     return min_cost_list
 
 # random restart x koordinati kadar ve y koordinat değer aralığında (0 ile arasında kalan, 0 dahil) değerler dizisi döndürür.
-def random_restart():
+
+
+def random_pos_generator():
     import random
     def random_in_range(): return random.randint(0, MAX_Y_CORD - 1)
     return [random_in_range() for x in range(MAX_X_CORD)]
+
+# main fonksiyon
+
+
+def main():
+    import random
+
+    # initial_state = random_pos_generator()
+    initial_state = [5, 2, 4, 7, 3, 0, 6, 1]
+
+    print("initial state: ", initial_state)
+
+    try_results = []
+    last_cost = 9999
+    
+    while last_cost != 0:
+        try_results.append(initial_state)
+
+        min_list = check_min_move(initial_state)
+
+        random_pick = random.randint(0, len(min_list) - 1)
+
+        initial_state[min_list[random_pick]["x"]] = min_list[random_pick]["y"]
+        print(initial_state)
+
+        last_cost = min_list[0]["cost"]
+
+        print("last_cost: ", last_cost)
+
+    pprint(check_min_move(initial_state))
+
+
+# if running current
+if __name__ == "__main__":
+    main()
