@@ -71,24 +71,41 @@ def cross_check(arr):
 
 # bütün hamlelerin -her sütun diğerleri değişmemiş gibi hesaplanır- çakışma sayılarını bulur
 def check_min_move(arr):
-     """
+    """
      arr: [int]
     """
-    # arr = [...8]
+
+    from pprint import pprint
+    
+    # bütün hamlelerin listesi
+    # min_list = []
+
+    # min maliyete sahip olanlar burada
+    min_cost_list = []
+    # min_cost = False
     for x_cor in range(MAX_X_CORD):
+        temp_list = []
         check_array = arr[:]
         for y_cor in range(MAX_Y_CORD):
             check_array[x_cor] = y_cor
             # print("c: " ,check_array)
             cost = horizantal_check(check_array) + cross_check(check_array)
-            print("index", x_cor, " and current index for cost: ",
-                  y_cor, " , cost: ", cost)
-        print("____")
+            temp_list.append(cost)
+            if(len(min_cost_list) > 0 and cost == min_cost_list[0]["cost"]):
+                min_cost_list.append({"x": x_cor, "y": y_cor, "cost": cost})
+            if(len(min_cost_list) == 0 or cost < min_cost_list[0]["cost"]):
+                min_cost_list = [ {"x": x_cor, "y": y_cor, "cost": cost}]
+          
+            # print("index", x_cor, " and current index for cost: ",
+            #       y_cor, " , cost: ", cost)
 
-# random restart x kordinati kadar ve y koordinat değer aralığında (0 ile arasında kalan, 0 dahil) değerler dizisi döndürür.
+        # min_list.append(temp_list)
+    # pprint( min_list)
+    # pprint(min_cost_list)
+    return min_cost_list
+
+# random restart x koordinati kadar ve y koordinat değer aralığında (0 ile arasında kalan, 0 dahil) değerler dizisi döndürür.
 def random_restart():
     import random
     def random_in_range(): return random.randint(0, MAX_Y_CORD - 1)
-    state = [random_in_range() for x in range(MAX_X_CORD)]
-    return state
-    
+    return [random_in_range() for x in range(MAX_X_CORD)]
