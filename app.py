@@ -35,7 +35,9 @@ TRY_COUNT = 20
 # yatayda çakışma sayısını verir
 def horizantal_check(arr):
     """
-    arr: [int]
+    params: 
+        arr: [int]
+    yatayda bulunan çakışma saıyısını döndürür.
     """
     count = 0
     for index in range(len(arr) - 1):
@@ -60,7 +62,9 @@ def vertical_check():
 
 def cross_check(arr):
     """
-     arr: [int]
+    params:
+        arr: [int]
+    çaprazda bulunan çakışma sayısını döndürür.
     """
     total_conflict = 0
     # her bir sütun için kontrol ediyoruz
@@ -81,7 +85,14 @@ def cross_check(arr):
 
 def check_min_move(arr):
     """
-     arr: [int]
+    params:
+        arr: [int]
+    min hamlelerin listesini döndürür. çıktı listesi içerisinde bulunanan dictionary örneği:
+    [{ 
+        "x": 0, 
+        "y": 0,
+        "cost" : 12
+    }] -> ifade olarak x ve y koordinatları 0,0 noktasına vezir çekilirse toplamda 12 çakışma olacağını belirtir.
     """
 
     # bütün hamlelerin listesi
@@ -104,7 +115,7 @@ def check_min_move(arr):
             if(len(min_cost_list) == 0 or cost < min_cost_list[0]["cost"]):
                 min_cost_list = [{"x": x_cor, "y": y_cor, "cost": cost}]
         # min_list.append(temp_list)
-    
+
     # pprint(min_list)
     return min_cost_list
 
@@ -112,38 +123,64 @@ def check_min_move(arr):
 
 
 def random_pos_generator():
+    """
+    random olarak MAX_X_CORD ve MAX_Y_CORD dikkate alarak değerler dizisi döndürür.
+    """
     import random
     def random_in_range(): return random.randint(0, MAX_Y_CORD - 1)
     return [random_in_range() for x in range(MAX_X_CORD)]
+
+
+# local optima durumunu kontrol eder
+def check_local_optima(state, min_moves):
+    """
+    params:
+        state: [int]
+        min_moves: [{"x", int, "y": int, "cost": int}...]
+    state'in local optimada sıkışıp sıkışmadığını döndürür.
+    """
+    for move in min_moves:
+        if(state[move["x"]] != move["y"]):
+            return False
+    return True
+
 
 # main fonksiyon
 
 
 def main():
     import random
+    import time
 
     # initial_state = random_pos_generator()
     initial_state = [5, 2, 4, 7, 3, 0, 6, 1]
 
     print("initial state: ", initial_state)
 
-    try_results = []
+    # try_results = []
     last_cost = 9999
-    
+    random_restart_count = 0
+    move_count = 0
+    process_time = 0
+    start = time.time()
     while last_cost != 0:
-        try_results.append(initial_state)
+        # try_results.append(initial_state)
 
         min_list = check_min_move(initial_state)
+
+        if(check_local_optima(initial_state, min_list)):
+            random_restart_count = random_restart_count + 1
+            initial_state = random_pos_generator()
+            continue
 
         random_pick = random.randint(0, len(min_list) - 1)
 
         initial_state[min_list[random_pick]["x"]] = min_list[random_pick]["y"]
-        print(initial_state)
-
+        move_count = move_count + 1
         last_cost = min_list[0]["cost"]
-
-        print("last_cost: ", last_cost)
-
+    end = time.time()
+    process_time = end - start
+    print("move_count: ", move_count, " random_restart_count: ", random_restart_count, " process_time: ", process_time)
     pprint(check_min_move(initial_state))
 
 
