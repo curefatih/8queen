@@ -115,7 +115,6 @@ def check_min_move(arr):
             if((len(min_cost_list) == 0 or cost < min_cost_list[0]["cost"]) and arr[x_cor] != y_cor):
                 min_cost_list = [{"x": x_cor, "y": y_cor, "cost": cost}]
         # min_list.append(temp_list)
-    print("state", arr)
 
     # pprint(min_list)
     return min_cost_list
@@ -146,11 +145,7 @@ def check_local_optima(state, min_moves):
     return True
 
 
-def check_shoulder(state):
-    min_moves = check_min_move(state)
-    print("min_moves")
-    pprint(min_moves)
-
+def check_shoulder(state, min_moves):
     # try all possible moves
     check_results = []
     for move in min_moves:
@@ -160,11 +155,10 @@ def check_shoulder(state):
         c_state_min_moves.append(move)
         check_results.append(c_state_min_moves)
 
-    pprint(check_results)
     # check the results are same or not
     for r in range(len(check_results)):
         for l in range(r + 1, len(check_results)):
-            print("cheecking for :", check_results[r], "\n", check_results[l])
+            # print("cheecking for :", check_results[r], "\n", check_results[l])
             if(len(check_results[r]) != len(check_results[l])):
                 return False
             pairs = zip(check_results[r], check_results[l])
@@ -181,9 +175,8 @@ def main():
     try_results = []
 
     for _ in range(TRY_COUNT):
-        # initial_state = random_pos_generator()
-        initial_state = [0, 2, 5, 7, 1, 3, 0, 6]
-        print("initial state: ", initial_state)
+        initial_state = random_pos_generator()
+        print("Initial state: ", initial_state)
 
         last_cost = 9999
         random_restart_count = 0
@@ -194,24 +187,25 @@ def main():
             # try_results.append(initial_state)
 
             min_list = check_min_move(initial_state)
-
-            if(check_local_optima(initial_state, min_list)):
+            if(check_local_optima(initial_state, min_list) or check_shoulder(initial_state, min_list)):
                 random_restart_count = random_restart_count + 1
                 initial_state = random_pos_generator()
                 continue
 
             random_pick = random.randint(0, (len(min_list) - 1))
-            print("debug _ ", initial_state)
+
             initial_state[min_list[random_pick]
                           ["x"]] = min_list[random_pick]["y"]
-            print("pick:", random_pick, min_list, initial_state)
+
             move_count = move_count + 1
             last_cost = min_list[0]["cost"]
+
         end = time.time()
         process_time = end - start
         print("Goal state:", initial_state)
         print("move_count: ", move_count, " random_restart_count: ",
               random_restart_count, " process_time: ", process_time)
+        input()
         try_results.append([move_count, random_restart_count, process_time])
         # pprint(check_min_move(initial_state))
     print("Total output: ")
