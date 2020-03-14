@@ -110,24 +110,15 @@ def check_min_move(arr):
             # print("c: " ,check_array)
             cost = horizantal_check(check_array) + cross_check(check_array)
             temp_list.append(cost)
-            if(len(min_cost_list) > 0 and cost == min_cost_list[0]["cost"]):
+            if(len(min_cost_list) > 0 and cost == min_cost_list[0]["cost"] and arr[x_cor] != y_cor):
                 min_cost_list.append({"x": x_cor, "y": y_cor, "cost": cost})
-            if(len(min_cost_list) == 0 or cost < min_cost_list[0]["cost"]):
+            if((len(min_cost_list) == 0 or cost < min_cost_list[0]["cost"]) and arr[x_cor] != y_cor):
                 min_cost_list = [{"x": x_cor, "y": y_cor, "cost": cost}]
         # min_list.append(temp_list)
     print("state", arr)
-    def filter_function(input):
-        if(input["y"] in arr and arr[arr.index(input["y"])] == input["y"]):
-            return False
-        for move in range(len(min_cost_list)):
-            # TODO
-            pass
-        return True
 
-    filtered_moves = list(filter(filter_function, min_cost_list))
-    pprint(min_cost_list)
     # pprint(min_list)
-    return filtered_moves
+    return min_cost_list
 
 # random restart x koordinati kadar ve y koordinat değer aralığında (0 ile arasında kalan, 0 dahil) değerler dizisi döndürür.
 
@@ -157,13 +148,29 @@ def check_local_optima(state, min_moves):
 
 def check_shoulder(state):
     min_moves = check_min_move(state)
+    print("min_moves")
+    pprint(min_moves)
 
+    # try all possible moves
     check_results = []
-    for move in range(filtered_moves):
-        a = state[:]
-        a[move["x"]] = move["y"]
+    for move in min_moves:
+        c_state = state[:]
+        c_state[move["x"]] = move["y"]
+        c_state_min_moves = check_min_move(c_state)
+        c_state_min_moves.append(move)
+        check_results.append(c_state_min_moves)
 
-    print(filtered_moves)
+    pprint(check_results)
+    # check the results are same or not
+    for r in range(len(check_results)):
+        for l in range(r + 1, len(check_results)):
+            print("cheecking for :", check_results[r], "\n", check_results[l])
+            if(len(check_results[r]) != len(check_results[l])):
+                return False
+            pairs = zip(check_results[r], check_results[l])
+            if(any(x == y for x, y in pairs)):
+                return True
+    return False  # there is no shoulder
 
 
 # main fonksiyon
