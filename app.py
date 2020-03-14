@@ -115,9 +115,19 @@ def check_min_move(arr):
             if(len(min_cost_list) == 0 or cost < min_cost_list[0]["cost"]):
                 min_cost_list = [{"x": x_cor, "y": y_cor, "cost": cost}]
         # min_list.append(temp_list)
+    print("state", arr)
+    def filter_function(input):
+        if(input["y"] in arr and arr[arr.index(input["y"])] == input["y"]):
+            return False
+        for move in range(len(min_cost_list)):
+            # TODO
+            pass
+        return True
 
+    filtered_moves = list(filter(filter_function, min_cost_list))
+    pprint(min_cost_list)
     # pprint(min_list)
-    return min_cost_list
+    return filtered_moves
 
 # random restart x koordinati kadar ve y koordinat değer aralığında (0 ile arasında kalan, 0 dahil) değerler dizisi döndürür.
 
@@ -145,43 +155,60 @@ def check_local_optima(state, min_moves):
     return True
 
 
+def check_shoulder(state):
+    min_moves = check_min_move(state)
+
+    check_results = []
+    for move in range(filtered_moves):
+        a = state[:]
+        a[move["x"]] = move["y"]
+
+    print(filtered_moves)
+
+
 # main fonksiyon
-
-
 def main():
     import random
     import time
 
-    # initial_state = random_pos_generator()
-    initial_state = [5, 2, 4, 7, 3, 0, 6, 1]
+    try_results = []
 
-    print("initial state: ", initial_state)
+    for _ in range(TRY_COUNT):
+        # initial_state = random_pos_generator()
+        initial_state = [0, 2, 5, 7, 1, 3, 0, 6]
+        print("initial state: ", initial_state)
 
-    # try_results = []
-    last_cost = 9999
-    random_restart_count = 0
-    move_count = 0
-    process_time = 0
-    start = time.time()
-    while last_cost != 0:
-        # try_results.append(initial_state)
+        last_cost = 9999
+        random_restart_count = 0
+        move_count = 0
+        process_time = 0
+        start = time.time()
+        while last_cost != 0:
+            # try_results.append(initial_state)
 
-        min_list = check_min_move(initial_state)
+            min_list = check_min_move(initial_state)
 
-        if(check_local_optima(initial_state, min_list)):
-            random_restart_count = random_restart_count + 1
-            initial_state = random_pos_generator()
-            continue
+            if(check_local_optima(initial_state, min_list)):
+                random_restart_count = random_restart_count + 1
+                initial_state = random_pos_generator()
+                continue
 
-        random_pick = random.randint(0, len(min_list) - 1)
-
-        initial_state[min_list[random_pick]["x"]] = min_list[random_pick]["y"]
-        move_count = move_count + 1
-        last_cost = min_list[0]["cost"]
-    end = time.time()
-    process_time = end - start
-    print("move_count: ", move_count, " random_restart_count: ", random_restart_count, " process_time: ", process_time)
-    pprint(check_min_move(initial_state))
+            random_pick = random.randint(0, (len(min_list) - 1))
+            print("debug _ ", initial_state)
+            initial_state[min_list[random_pick]
+                          ["x"]] = min_list[random_pick]["y"]
+            print("pick:", random_pick, min_list, initial_state)
+            move_count = move_count + 1
+            last_cost = min_list[0]["cost"]
+        end = time.time()
+        process_time = end - start
+        print("Goal state:", initial_state)
+        print("move_count: ", move_count, " random_restart_count: ",
+              random_restart_count, " process_time: ", process_time)
+        try_results.append([move_count, random_restart_count, process_time])
+        # pprint(check_min_move(initial_state))
+    print("Total output: ")
+    pprint(try_results)
 
 
 # if running current
