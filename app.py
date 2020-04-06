@@ -100,7 +100,6 @@ def check_min_move(arr):
 
     # min maliyete sahip olanlar burada
     min_cost_list = []
-    # TODO min değerinin her bir vezirin yanında vermek veri tekrarına yol açıyor. Daha etkin bir yol bulunabilir.
     # min_cost = False
     for x_cor in range(MAX_X_CORD):
         temp_list = []
@@ -209,6 +208,16 @@ def main():
         try_results.append([move_count, random_restart_count, process_time])
         # pprint(check_min_move(initial_state))
     print("Total output: ")
+
+    means = [0 for x in try_results[0]]
+    row_count = len(try_results)
+    for t in range(row_count):
+        for tc in range(len(try_results[t])):
+            means[tc] = means[tc] + try_results[t][tc]
+    
+    for m in range(len(means)):
+        means[m] = means[m] / row_count
+    try_results.append(means)
     pprint(try_results)
 
 
