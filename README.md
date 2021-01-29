@@ -1,4 +1,3 @@
-# Proje 1
- 
-## Yapay Zeka Yöntemleri ve Uygulamaları 
+## 8 queen problem
 
+ Yapay Zeka Yöntemleri ve Uygulamaları | Proje 1
