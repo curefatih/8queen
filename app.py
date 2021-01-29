@@ -33,7 +33,7 @@ TRY_COUNT = 20
 # kontrol fonksiyonları
 
 # yatayda çakışma sayısını verir
-def horizantal_check(arr):
+def horizontal_check(arr):
     """
     params: 
         arr: [int]
@@ -107,7 +107,7 @@ def check_min_move(arr):
         for y_cor in range(MAX_Y_CORD):
             check_array[x_cor] = y_cor
             # print("c: " ,check_array)
-            cost = horizantal_check(check_array) + cross_check(check_array)
+            cost = horizontal_check(check_array) + cross_check(check_array)
             temp_list.append(cost)
             if(len(min_cost_list) > 0 and cost == min_cost_list[0]["cost"] and arr[x_cor] != y_cor):
                 min_cost_list.append({"x": x_cor, "y": y_cor, "cost": cost})
